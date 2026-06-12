@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular Roadmap — Senior Architect Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap');
+
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --surface2: #161b2a;
+    --border: #1e2537;
+    --accent: #e90464;
+    --accent2: #7c3aed;
+    --accent3: #0ea5e9;
+    --accent4: #f59e0b;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --green: #10b981;
+    --red: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0d14 0%, #0f1423 40%, #130b1f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 48px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(233,4,100,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+  }
+  .meta-pill span { color: var(--accent); }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    margin: 40px 0;
+    border-radius: 4px;
+  }
+  .toc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px 24px;
+  }
+  .toc a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+  .toc a:hover { color: var(--accent); }
+  .toc a::before { content: '→'; color: var(--accent); font-size: 10px; }
+
+  /* SECTION */
+  .section {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(233,4,100,0.08);
+    border: 1px solid rgba(233,4,100,0.2);
+    padding: 4px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent3);
+    margin: 24px 0 10px;
+    letter-spacing: 0.02em;
+  }
+
+  p { color: var(--text-dim); margin-bottom: 12px; }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+  .card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .card h4 { color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+  .card p { font-size: 13px; color: var(--text-muted); margin: 0; }
+
+  /* CODE */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  pre {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 20px 24px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+    color: #c9d1d9;
+  }
+  code {
+    background: rgba(124,58,237,0.12);
+    color: #a78bfa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+
+  /* KEYWORD COLORS */
+  .kw { color: #ff7b72; }
+  .fn { color: #79c0ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .dec { color: #ffa657; }
+  .tp { color: #7ee787; }
+
+  /* TIMELINE */
+  .timeline { margin: 24px 0; }
+  .tl-item {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(30,37,55,0.6);
+    align-items: flex-start;
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-done { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+  .badge-stable { background: rgba(14,165,233,0.1); color: var(--accent3); border: 1px solid rgba(14,165,233,0.2); }
+  .badge-preview { background: rgba(245,158,11,0.1); color: var(--accent4); border: 1px solid rgba(245,158,11,0.2); }
+  .badge-upcoming { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.2); }
+  .tl-text { font-size: 13px; color: var(--text-dim); }
+  .tl-text strong { color: var(--text); }
+
+  /* WARN / TIP / DANGER BOXES */
+  .callout {
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  .callout-tip { background: rgba(16,185,129,0.06); border-left: 3px solid var(--green); }
+  .callout-warn { background: rgba(245,158,11,0.06); border-left: 3px solid var(--accent4); }
+  .callout-danger { background: rgba(239,68,68,0.06); border-left: 3px solid var(--red); }
+  .callout-info { background: rgba(14,165,233,0.06); border-left: 3px solid var(--accent3); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .tip-label { color: var(--green); }
+  .warn-label { color: var(--accent4); }
+  .danger-label { color: var(--red); }
+  .info-label { color: var(--accent3); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30,37,55,0.5);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.01); }
+
+  /* LEVEL TABS */
+  .level-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .level-header {
+    padding: 14px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .level-beginner .level-header { background: rgba(16,185,129,0.1); color: var(--green); border-bottom: 1px solid rgba(16,185,129,0.2); }
+  .level-intermediate .level-header { background: rgba(245,158,11,0.1); color: var(--accent4); border-bottom: 1px solid rgba(245,158,11,0.2); }
+  .level-expert .level-header { background: rgba(233,4,100,0.1); color: var(--accent); border-bottom: 1px solid rgba(233,4,100,0.2); }
+  .level-content { padding: 20px; }
+  .level-content ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .level-content li {
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    border-left: 2px solid var(--border);
+    line-height: 1.5;
+  }
+
+  /* ROADMAP VISUAL */
+  .roadmap-phase {
+    display: flex;
+    gap: 0;
+    margin: 24px 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .phase {
+    flex: 1;
+    min-width: 160px;
+    padding: 16px;
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+  }
+  .phase:last-child { border-right: 1px solid var(--border); }
+  .phase::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 14px;
+    z-index: 1;
+    background: var(--bg);
+    padding: 2px 0;
+  }
+  .phase:last-child::after { display: none; }
+  .phase-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); margin-bottom: 6px; }
+  .phase h4 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .phase ul { list-style: none; }
+  .phase li { font-size: 11px; color: var(--text-muted); padding: 2px 0; }
+  .phase li::before { content: '·'; color: var(--accent2); margin-right: 6px; }
+
+  /* QUESTIONS */
+  .q-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .q-item:hover { border-color: var(--accent2); }
+  .q-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent4);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .q-text { color: var(--text); font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .q-answer { color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+  ul.checklist { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+  ul.checklist li { font-size: 13.5px; color: var(--text-dim); padding: 6px 12px; background: var(--surface); border-radius: 3px; }
+  ul.checklist li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+  ul.checklist li.no::before { content: '✗ '; color: var(--red); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } .hero { padding: 40px 24px 32px; } .container { padding: 0 20px; } }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Senior Architect Deep-Dive</div>
+    <h1>Angular Roadmap<br>Complete Analysis</h1>
+    <p class="hero-sub">A production-grade breakdown of Angular's strategic direction, architecture evolution, and what v20–v22's roadmap means for your apps.</p>
+    <div class="hero-meta">
+      <div class="meta-pill">Source: <span>angular.dev/roadmap</span></div>
+      <div class="meta-pill">Framework: <span>Angular v22</span></div>
+      <div class="meta-pill">By: <span>Senior Architect Analysis</span></div>
+      <div class="meta-pill">Scope: <span>14 Topics</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">// Table of Contents</div>
+    <div class="toc-grid">
+      <a href="#purpose">Purpose</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#components">Components</a>
+      <a href="#dataflow">Data Flow</a>
+      <a href="#patterns">Design Patterns</a>
+      <a href="#api">API & APIs</a>
+      <a href="#config">Configuration</a>
+      <a href="#security">Security</a>
+      <a href="#performance">Performance</a>
+      <a href="#examples">Real-world Examples</a>
+      <a href="#production">Production Best Practices</a>
+      <a href="#mistakes">Common Mistakes</a>
+      <a href="#interview">Interview Questions</a>
+      <a href="#notes">Beginner / Intermediate / Expert Notes</a>
+      <a href="#learning">Learning Roadmap</a>
+    </div>
+  </div>
+
+
+  <!-- 01. PURPOSE -->
+  <section class="section" id="purpose">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>Purpose of the Angular Roadmap</h2>
+    </div>
+
+    <p>The Angular Roadmap is the <strong>official strategic communication layer</strong> between the Angular core team at Google and the global developer community. It serves three distinct functions:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <h4>Transparency</h4>
+        <p>Connects day-to-day GitHub commits to the framework's long-term vision — showing developers why decisions are made, not just what changed.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h4>Strategic Alignment</h4>
+        <p>Defines three pillars: AI developer experience, developer velocity, and raw framework performance — keeping the team focused and the community informed.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h4>Community Contract</h4>
+        <p>Features are listed by status (experimental → developer preview → stable), giving teams confidence about when to adopt new APIs in production.</p>
+      </div>
+    </div>
+
+    <h3>The Three Strategic Goals (Angular v22+)</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-badge badge-upcoming">Goal 1</span>
+        <div class="tl-text"><strong>Improve the AI experience</strong> — AI-assisted coding, code generation quality, Dynamic UI generation (A2UI), MCP features, AI SDKs, and Gemini/Google AI Studio integrations.</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-badge badge-upcoming">Goal 2</span>
+        <div class="tl-text"><strong>Improve developer experience</strong> — Signal Forms to stable, tsgo compiler compatibility, Zoneless as default, OnPush as default CD strategy, Angular Aria stable, Vitest as primary test runner.</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-badge badge-upcoming">Goal 3</span>
+        <div class="tl-text"><strong>Improve framework performance</strong> — Zoneless removing zone.js overhead, incremental hydration (40-50% LCP gains), esbuild/Vite build pipeline (87% faster builds), tsgo compiler (5-10× TypeScript compile speedup).</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 02. ARCHITECTURE -->
+  <section class="section" id="architecture">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2>Architecture Evolution</h2>
+    </div>
+
+    <p>Angular's architecture has undergone a fundamental paradigm shift across versions 14–22. Understanding this evolution is critical for building maintainable applications today.</p>
+
+    <h3>The Architectural Eras</h3>
+    <table>
+      <thead>
+        <tr><th>Era</th><th>Change Detection</th><th>Module System</th><th>Reactivity</th><th>Rendering</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>v2–v12 (View Engine)</td><td>Zone.js + Default</td><td>NgModules required</td><td>Observables (RxJS)</td><td>CSR only</td></tr>
+        <tr><td>v13–v16 (Ivy)</td><td>Zone.js + OnPush</td><td>NgModules optional</td><td>RxJS + proto-Signals</td><td>CSR + basic SSR</td></tr>
+        <tr><td>v17–v19 (Modern)</td><td>Zone.js → Zoneless exp.</td><td>Standalone default</td><td>Signals experimental</td><td>Full hydration, @defer</td></tr>
+        <tr><td>v20–v22 (Current)</td><td>Zoneless stable</td><td>Standalone only</td><td>Signals stable</td><td>Incremental hydration stable</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Current Architecture (v22)</h3>
+    <pre><code><span class="cm">// High-level Angular v22 App Architecture</span>
+
+<span class="dec">@Component</span>({
+  <span class="cm">// Standalone — no NgModule required</span>
+  standalone: <span class="kw">true</span>,
+  selector: <span class="str">'app-root'</span>,
+  changeDetection: ChangeDetectionStrategy.<span class="fn">OnPush</span>, <span class="cm">// Soon default</span>
+  template: <span class="str">`
+    @if (user()) {
+      &lt;app-dashboard [user]="user()" /&gt;
+    }
+    @defer (on viewport) {
+      &lt;app-analytics /&gt;            // Lazy-loaded
+    } @placeholder {
+      &lt;loading-skeleton /&gt;
+    }
+  `</span>
+})
+<span class="kw">export class</span> <span class="tp">AppComponent</span> {
+  <span class="cm">// Signal-based reactivity</span>
+  user = <span class="fn">signal</span>&lt;User | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  
+  <span class="cm">// httpResource: async signal for HTTP</span>
+  userData = <span class="fn">httpResource</span>(<span class="str">'/api/user'</span>);
+}</code></pre>
+
+    <h3>Compiler Pipeline (tsgo era)</h3>
+    <p>The most significant upcoming architectural change is the Angular compiler migrating to <strong>tsgo</strong> (TypeScript compiled to Go by Microsoft). This requires deep changes:</p>
+    <div class="two-col">
+      <div>
+        <div class="callout callout-warn">
+          <div class="callout-label warn-label">⚠ Impact</div>
+          Angular has one of the deepest integrations with the TypeScript compiler of any framework. The tsgo migration will require the Angular compiler AND language service to be rebuilt — not just wrapper changes.
+        </div>
+      </div>
+      <div>
+        <div class="callout callout-tip">
+          <div class="callout-label tip-label">✓ Benefit</div>
+          5–10× faster TypeScript compilation means Angular projects that take 30s to build today could complete in 3–6s. For large enterprise apps, this is transformational.
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 03. COMPONENTS -->
+  <section class="section" id="components">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2>Framework Components</h2>
+    </div>
+
+    <p>Angular's "components" in the architectural sense refers to the distinct system layers, not just UI components. Here's the complete map:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>Signals (Reactivity Core)</h4>
+        <p>signal(), computed(), effect(), linkedSignal() — all stable in v20. The new reactivity primitive replacing Zone.js + RxJS for most state.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h4>Resource API</h4>
+        <p>resource() and httpResource() for async signal-based data fetching. Currently experimental — expect stable in v22–v23.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h4>Signal Forms</h4>
+        <p>Experimental in v21. Manages form state with Signals instead of FormControl observables. Interoperable with Reactive Forms for gradual migration.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌊</div>
+        <h4>Incremental Hydration</h4>
+        <p>Stable in v20. Powered by @defer blocks. Hydrates parts of the page only when needed (on viewport, on interaction, etc.).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">♿</div>
+        <h4>Angular Aria (CDK)</h4>
+        <p>8 headless, accessible interaction patterns launched in v21 developer preview. Bring your own styles, get WCAG-compliant interactions for free.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧪</div>
+        <h4>Vitest Integration</h4>
+        <p>Stable unit test runner as of v21. Vitest replaces Karma as the primary runner. Migration schematic from Karma → Vitest available.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛣️</div>
+        <h4>Route-level Render Mode</h4>
+        <p>Stable in v20. Declare per-route SSR/SSG/CSR strategy in the router config. Eliminates the need for separate apps or server configs per route type.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>Event Replay (SSR)</h4>
+        <p>Stable in v19, enabled by default in new projects. Captures user events during hydration and replays them — no more lost clicks on SSR pages.</p>
+      </div>
+    </div>
+
+    <h3>Component System: Standalone Architecture</h3>
+    <pre><code><span class="cm">// Modern standalone component — v22 style</span>
+<span class="dec">@Component</span>({
+  standalone: <span class="kw">true</span>,
+  selector: <span class="str">'app-user-card'</span>,
+  imports: [AsyncPipe, RouterLink, NgOptimizedImage],
+  changeDetection: ChangeDetectionStrategy.<span class="fn">OnPush</span>,
+  template: <span class="str">`
+    &lt;img [ngSrc]="user().avatar" width="64" height="64" /&gt;
+    &lt;h2&gt;{{ user().name }}&lt;/h2&gt;
+    @if (isAdmin()) {
+      &lt;admin-badge /&gt;
+    }
+  `</span>
+})
+<span class="kw">export class</span> <span class="tp">UserCardComponent</span> {
+  user = <span class="fn">input</span>.required&lt;<span class="tp">User</span>&gt;();           <span class="cm">// Signal Input (stable v17+)</span>
+  isAdmin = <span class="fn">computed</span>(() =&gt; this.user().role === <span class="str">'admin'</span>);
+}</code></pre>
+  </section>
+
+
+  <!-- 04. DATA FLOW -->
+  <section class="section" id="dataflow">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2>Data Flow</h2>
+    </div>
+
+    <p>Angular's data flow model has shifted from a <strong>push-based (Zone.js) model</strong> to a <strong>pull-based (Signals) model</strong>. Understanding both is essential for migrating existing apps.</p>
+
+    <h3>Old Flow: Zone.js (Legacy)</h3>
+    <pre><code><span class="cm">// Zone.js patches async APIs — ANY async triggers CD on the whole tree</span>
+setTimeout(() =&gt; {
+  <span class="cm">// Zone.js intercepts this → marks the whole app as dirty → re-renders everything</span>
+  this.count++;
+}, 1000);</code></pre>
+
+    <h3>New Flow: Signals + Zoneless (v20+)</h3>
+    <pre><code><span class="cm">// Signal graph: only components using this.count re-render</span>
+<span class="kw">export class</span> <span class="tp">CounterComponent</span> {
+  count = <span class="fn">signal</span>(0);
+  doubled = <span class="fn">computed</span>(() =&gt; this.count() * 2); <span class="cm">// memoized</span>
+
+  increment() {
+    this.count.<span class="fn">update</span>(n =&gt; n + 1);
+    <span class="cm">// Angular knows ONLY components depending on count need re-render</span>
+  }
+}
+
+<span class="cm">// Async data: httpResource (experimental → stable soon)</span>
+products = <span class="fn">httpResource</span>&lt;<span class="tp">Product[]</span>&gt;(<span class="str">'/api/products'</span>);
+<span class="cm">// products.value()  → signal with data</span>
+<span class="cm">// products.status() → 'idle' | 'loading' | 'resolved' | 'error'</span>
+<span class="cm">// products.error()  → error signal</span></code></pre>
+
+    <h3>Unidirectional Data Flow</h3>
+    <table>
+      <thead><tr><th>Direction</th><th>Mechanism</th><th>Modern Equivalent</th></tr></thead>
+      <tbody>
+        <tr><td>Parent → Child</td><td><code>@Input()</code></td><td><code>input()</code> signal</td></tr>
+        <tr><td>Child → Parent</td><td><code>@Output() EventEmitter</code></td><td><code>output()</code> signal</td></tr>
+        <tr><td>Sibling/Service</td><td>Service + BehaviorSubject</td><td>Service + <code>signal()</code></td></tr>
+        <tr><td>Global State</td><td>NgRx / Akita</td><td>Signal Store (NgRx Signals)</td></tr>
+        <tr><td>Async HTTP</td><td>HttpClient + Observable</td><td><code>httpResource()</code></td></tr>
+        <tr><td>Computed State</td><td><code>pipe(map(...))</code></td><td><code>computed()</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <!-- 05. DESIGN PATTERNS -->
+  <section class="section" id="patterns">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2>Design Patterns</h2>
+    </div>
+
+    <h3>1. Smart/Dumb Component Pattern (Container/Presenter)</h3>
+    <pre><code><span class="cm">// SMART: owns state & logic</span>
+<span class="dec">@Component</span>({ standalone: <span class="kw">true</span>, template: <span class="str">`&lt;user-list [users]="users()" (select)="onSelect($event)" /&gt;`</span> })
+<span class="kw">export class</span> <span class="tp">UserPageComponent</span> {
+  users = <span class="fn">httpResource</span>&lt;<span class="tp">User[]</span>&gt;(<span class="str">'/api/users'</span>);
+  <span class="fn">onSelect</span>(user: <span class="tp">User</span>) { <span class="cm">/* navigate */</span> }
+}
+
+<span class="cm">// DUMB: only renders, no logic</span>
+<span class="dec">@Component</span>({ standalone: <span class="kw">true</span>, changeDetection: ChangeDetectionStrategy.<span class="fn">OnPush</span> })
+<span class="kw">export class</span> <span class="tp">UserListComponent</span> {
+  users = <span class="fn">input</span>.required&lt;<span class="tp">User[]</span>&gt;();
+  select = <span class="fn">output</span>&lt;<span class="tp">User</span>&gt;();
+}</code></pre>
+
+    <h3>2. Signal Store Pattern (State Management)</h3>
+    <pre><code><span class="cm">// NgRx Signal Store — replaces heavy NgRx boilerplate</span>
+<span class="kw">export const</span> UserStore = <span class="fn">signalStore</span>(
+  <span class="fn">withState</span>({ users: [] <span class="kw">as</span> <span class="tp">User[]</span>, loading: <span class="kw">false</span> }),
+  <span class="fn">withComputed</span>(({ users }) =&gt; ({
+    activeUsers: <span class="fn">computed</span>(() =&gt; users().<span class="fn">filter</span>(u =&gt; u.active))
+  })),
+  <span class="fn">withMethods</span>((store, http = <span class="fn">inject</span>(<span class="tp">HttpClient</span>)) =&gt; ({
+    <span class="fn">loadUsers</span>: <span class="fn">rxMethod</span>&lt;<span class="kw">void</span>&gt;(<span class="fn">pipe</span>(<span class="fn">switchMap</span>(() =&gt; http.<span class="fn">get</span>(<span class="str">'/api/users'</span>))))
+  }))
+);</code></pre>
+
+    <h3>3. Deferred Loading Pattern</h3>
+    <pre><code><span class="str">@defer (on viewport; prefetch on idle)</span> {
+  <span class="cm">&lt;!-- Heavy analytics dashboard, loads only when scrolled into view --&gt;</span>
+  &lt;analytics-dashboard /&gt;
+} <span class="str">@loading (minimum 300ms)</span> {
+  &lt;skeleton-loader /&gt;
+} <span class="str">@error</span> {
+  &lt;error-fallback /&gt;
+}</code></pre>
+
+    <h3>4. Directive Composition Pattern (v15+)</h3>
+    <pre><code><span class="dec">@Component</span>({
+  hostDirectives: [
+    { directive: <span class="tp">CdkDrag</span> },
+    { directive: <span class="tp">HasRipple</span>, inputs: [<span class="str">'color'</span>] },
+    { directive: <span class="tp">IsDisabled</span>, outputs: [<span class="str">'disabledChange'</span>] }
+  ]
+})
+<span class="kw">export class</span> <span class="tp">DraggableCardComponent</span> {}</code></pre>
+
+    <h3>5. Route-level Render Strategy Pattern (v20+)</h3>
+    <pre><code><span class="kw">export const</span> routes: <span class="tp">Routes</span> = [
+  { path: <span class="str">'home'</span>,      renderMode: <span class="fn">RenderMode</span>.Prerender },  <span class="cm">// SSG</span>
+  { path: <span class="str">'dashboard'</span>, renderMode: <span class="fn">RenderMode</span>.Client },     <span class="cm">// CSR</span>
+  { path: <span class="str">'product/:id'</span>,renderMode: <span class="fn">RenderMode</span>.Server },     <span class="cm">// SSR</span>
+];</code></pre>
+  </section>
+
+
+  <!-- 06. API -->
+  <section class="section" id="api">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2>Key APIs from the Roadmap</h2>
+    </div>
+
+    <table>
+      <thead><tr><th>API</th><th>Status</th><th>Purpose</th><th>Since</th></tr></thead>
+      <tbody>
+        <tr><td><code>signal()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Reactive state primitive</td><td>v17 preview → v20 stable</td></tr>
+        <tr><td><code>computed()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Derived/memoized signal</td><td>v17 preview → v20 stable</td></tr>
+        <tr><td><code>effect()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Side-effect from signals</td><td>v20 stable</td></tr>
+        <tr><td><code>linkedSignal()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Signal linked to source signal</td><td>v20 stable</td></tr>
+        <tr><td><code>input()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Signal-based @Input</td><td>v17.1</td></tr>
+        <tr><td><code>output()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Signal-based @Output</td><td>v17.3</td></tr>
+        <tr><td><code>viewChild()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Signal-based @ViewChild</td><td>v17.2</td></tr>
+        <tr><td><code>httpResource()</code></td><td><span class="tl-badge badge-preview">Experimental</span></td><td>Signal-based HTTP fetching</td><td>v19.2</td></tr>
+        <tr><td><code>resource()</code></td><td><span class="tl-badge badge-preview">Experimental</span></td><td>Generic async signal</td><td>v19</td></tr>
+        <tr><td><code>withEventReplay()</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>SSR event replay</td><td>v19 stable</td></tr>
+        <tr><td><code>@defer</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Lazy template loading</td><td>v17 stable</td></tr>
+        <tr><td><code>@let</code></td><td><span class="tl-badge badge-stable">Stable</span></td><td>Local template variables</td><td>v18</td></tr>
+        <tr><td>Signal Forms</td><td><span class="tl-badge badge-preview">Experimental</span></td><td>Signal-based form state</td><td>v21</td></tr>
+        <tr><td>Angular Aria</td><td><span class="tl-badge badge-preview">Dev Preview</span></td><td>Headless accessible components</td><td>v21</td></tr>
+        <tr><td>Zoneless</td><td><span class="tl-badge badge-stable">Stable</span></td><td>Zone.js-free change detection</td><td>v20.2</td></tr>
+      </tbody>
+    </table>
+
+    <h3>HTTP API Evolution</h3>
+    <pre><code><span class="cm">// Old approach — manual subscribe/unsubscribe, error handling, loading state</span>
+users$: <span class="tp">Observable</span>&lt;<span class="tp">User[]</span>&gt; = this.http.<span class="fn">get</span>&lt;<span class="tp">User[]</span>&gt;(<span class="str">'/api/users'</span>);
+
+<span class="cm">// New httpResource approach (experimental, v19.2+)</span>
+users = <span class="fn">httpResource</span>&lt;<span class="tp">User[]</span>&gt;(() =&gt; ({
+  url: <span class="str">`/api/users`</span>,
+  params: { team: this.selectedTeam() }  <span class="cm">// reactive: re-fetches when team changes</span>
+}));
+<span class="cm">// users.isLoading()  users.value()  users.error()  users.reload()</span></code></pre>
+  </section>
+
+
+  <!-- 07. CONFIGURATION -->
+  <section class="section" id="config">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2>Configuration</h2>
+    </div>
+
+    <h3>App Bootstrap (v22 — Standalone)</h3>
+    <pre><code><span class="cm">// main.ts — Zoneless + SSR + Event Replay</span>
+<span class="fn">bootstrapApplication</span>(<span class="tp">AppComponent</span>, {
+  providers: [
+    <span class="fn">provideRouter</span>(routes, <span class="fn">withViewTransitions</span>()),
+    <span class="fn">provideHttpClient</span>(<span class="fn">withFetch</span>()),
+    <span class="fn">provideClientHydration</span>(<span class="fn">withEventReplay</span>(), <span class="fn">withIncrementalHydration</span>()),
+    <span class="fn">provideExperimentalZonelessChangeDetection</span>(),  <span class="cm">// stable in v20.2</span>
+    <span class="fn">provideAnimationsAsync</span>(),
+  ]
+});</code></pre>
+
+    <h3>angular.json Key Configurations</h3>
+    <pre><code>{
+  "build": {
+    "builder": <span class="str">"@angular-devkit/build-angular:application"</span>, <span class="cm">// esbuild builder</span>
+    "options": {
+      "outputMode": <span class="str">"server"</span>,         <span class="cm">// SSR enabled</span>
+      "ssr": { "entry": <span class="str">"server.ts"</span> },
+      "prerender": <span class="kw">true</span>,              <span class="cm">// SSG for static routes</span>
+      "optimization": <span class="kw">true</span>,
+      "budgets": [
+        { "type": <span class="str">"initial"</span>, "maximumError": <span class="str">"1mb"</span> },
+        { "type": <span class="str">"anyComponentStyle"</span>, "maximumError": <span class="str">"4kb"</span> }
+      ]
+    }
+  }
+}</code></pre>
+
+    <h3>tsconfig for Modern Angular</h3>
+    <pre><code>{
+  "compilerOptions": {
+    "target": <span class="str">"ES2022"</span>,
+    "useDefineForClassFields": <span class="kw">false</span>,
+    "experimentalDecorators": <span class="kw">true</span>,
+    "strictTemplates": <span class="kw">true</span>,
+    "strictNullChecks": <span class="kw">true</span>,
+    "strict": <span class="kw">true</span>
+  }
+}</code></pre>
+  </section>
+
+
+  <!-- 08. SECURITY -->
+  <section class="section" id="security">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2>Security Considerations</h2>
+    </div>
+
+    <h3>Built-in Security Features (from Roadmap)</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h4>Trusted Types API</h4>
+        <p>Angular collaborates with Google Security team to support native Trusted Types, preventing DOM-based XSS at the platform level.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h4>Auto-sanitization</h4>
+        <p>Angular auto-sanitizes values bound to innerHTML, href, and src by default. Use DomSanitizer.bypassSecurityTrustHtml() only when explicitly safe.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h4>Content Security Policy</h4>
+        <p>Angular's Ivy renderer generates nonce-compatible style attributes, supporting strict CSP without unsafe-inline.</p>
+      </div>
+    </div>
+
+    <h3>CSRF Protection</h3>
+    <pre><code><span class="cm">// Angular's HttpClient handles CSRF via the XSRF cookie pattern</span>
+<span class="fn">provideHttpClient</span>(
+  <span class="fn">withXsrfConfiguration</span>({
+    cookieName: <span class="str">'XSRF-TOKEN'</span>,   <span class="cm">// server sets this</span>
+    headerName: <span class="str">'X-XSRF-TOKEN'</span>  <span class="cm">// Angular sends this</span>
+  })
+)</code></pre>
+
+    <h3>Security Checklist</h3>
+    <ul class="checklist">
+      <li>Never use <code>bypassSecurityTrustHtml()</code> on user-generated content</li>
+      <li>Use strict CSP with nonce — Angular's Ivy supports it natively</li>
+      <li>Enable HttpClient XSRF handling for state-mutating requests</li>
+      <li>Implement route guards with CanActivateFn for auth checks</li>
+      <li>Use Angular's built-in Trusted Types support (no manual DOM writes)</li>
+      <li>Audit third-party libraries — they bypass Angular's sanitization</li>
+      <li class="no">Never store JWT in localStorage (XSS-accessible) — use httpOnly cookies</li>
+      <li class="no">Never disable AOT — template compilation prevents injection attacks</li>
+    </ul>
+
+    <h3>Zoneless Security Benefit</h3>
+    <div class="callout callout-info">
+      <div class="callout-label info-label">ℹ Info</div>
+      Removing zone.js also removes a subtle security surface: zone.js patches global async APIs (setTimeout, fetch, Promise) — any library that inspects those patches can fingerprint your app or inject malicious code into the async chain. Zoneless eliminates this attack vector entirely.
+    </div>
+  </section>
+
+
+  <!-- 09. PERFORMANCE -->
+  <section class="section" id="performance">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2>Performance Considerations</h2>
+    </div>
+
+    <h3>Measured Performance Gains from Roadmap</h3>
+    <table>
+      <thead><tr><th>Feature</th><th>Metric</th><th>Gain</th><th>Available Since</th></tr></thead>
+      <tbody>
+        <tr><td>Full Hydration</td><td>LCP</td><td>45% improvement (lab)</td><td>v16 preview, v17 stable</td></tr>
+        <tr><td>Incremental Hydration</td><td>LCP</td><td>40–50% improvement</td><td>v20 stable</td></tr>
+        <tr><td>esbuild + Vite Builder</td><td>Build time (hybrid)</td><td>87% faster</td><td>v17 default</td></tr>
+        <tr><td>Zoneless</td><td>Bundle size</td><td>~33KB smaller (zone.js removed)</td><td>v20.2 stable</td></tr>
+        <tr><td>tsgo Compiler</td><td>TS compile time</td><td>5–10× faster (upcoming)</td><td>In progress</td></tr>
+        <tr><td>HMR (Template)</td><td>Hot reload time</td><td>Full reload → ~100ms</td><td>v20 stable</td></tr>
+      </tbody>
+    </table>
+
+    <h3>OnPush + Signals: The Performance Stack</h3>
+    <pre><code><span class="dec">@Component</span>({
+  changeDetection: ChangeDetectionStrategy.<span class="fn">OnPush</span>, <span class="cm">// only re-render when inputs change</span>
+})
+<span class="kw">export class</span> <span class="tp">ProductListComponent</span> {
+  products = <span class="fn">input</span>.required&lt;<span class="tp">Product[]</span>&gt;();
+  filter = <span class="fn">signal</span>(<span class="str">''</span>);
+  
+  <span class="cm">// memoized: re-computes only when products or filter changes</span>
+  filtered = <span class="fn">computed</span>(() =&gt;
+    this.products().<span class="fn">filter</span>(p =&gt; p.name.<span class="fn">includes</span>(this.filter()))
+  );
+}
+<span class="cm">// With signals + OnPush: Angular skips this component entirely</span>
+<span class="cm">// unless .products input reference changes or .filter() emits a new value.</span></code></pre>
+
+    <h3>Image Performance</h3>
+    <pre><code><span class="cm">// NgOptimizedImage — automatic LCP optimization</span>
+&lt;img <span class="fn">ngSrc</span>=<span class="str">"hero.jpg"</span>
+     width=<span class="str">"1200"</span> height=<span class="str">"600"</span>
+     priority              <span class="cm">&lt;!-- preloads above-the-fold images --&gt;</span>
+     fetchpriority=<span class="str">"high"</span>
+     placeholder=<span class="str">"blur"</span> /&gt;</code></pre>
+
+    <h3>@defer for Perceived Performance</h3>
+    <pre><code><span class="cm">&lt;!-- Prefetch on idle, show only on hover --&gt;</span>
+<span class="str">@defer (on hover(triggerEl); prefetch on idle)</span> {
+  &lt;tooltip-content /&gt;
+}
+<span class="str">@placeholder</span> {
+  &lt;span #triggerEl&gt;Hover me&lt;/span&gt;
+}</code></pre>
+  </section>
+
+
+  <!-- 10. REAL-WORLD EXAMPLES -->
+  <section class="section" id="examples">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Real-world Examples</h2>
+    </div>
+
+    <h3>Google Fonts — Zoneless Migration Case Study</h3>
+    <div class="callout callout-info">
+      <div class="callout-label info-label">📌 Production Case</div>
+      The Angular team migrated Google Fonts to Zoneless Angular. Results: improved Core Web Vitals performance, smaller bundle (no zone.js), better developer experience for the Fonts team, and identification of gaps in the Zoneless API that were then fixed before v20.2 stable release.
+    </div>
+
+    <h3>E-commerce Product Page (Route-level Render Modes)</h3>
+    <pre><code><span class="kw">export const</span> routes: <span class="tp">Routes</span> = [
+  <span class="cm">// /products — prerendered at build time for max performance</span>
+  { path: <span class="str">'products'</span>, component: <span class="tp">ProductListComponent</span>,
+    renderMode: <span class="fn">RenderMode</span>.Prerender },
+
+  <span class="cm">// /product/:id — SSR for dynamic pricing/stock (can't prerender)</span>
+  { path: <span class="str">'product/:id'</span>, component: <span class="tp">ProductDetailComponent</span>,
+    renderMode: <span class="fn">RenderMode</span>.Server },
+
+  <span class="cm">// /checkout — CSR only (auth-gated, no need for SSR)</span>
+  { path: <span class="str">'checkout'</span>, component: <span class="tp">CheckoutComponent</span>,
+    renderMode: <span class="fn">RenderMode</span>.Client },
+];</code></pre>
+
+    <h3>Signal-based Dashboard with httpResource</h3>
+    <pre><code><span class="dec">@Component</span>({ standalone: <span class="kw">true</span>, template: <span class="str">`
+  &lt;team-selector [(value)]="selectedTeam" /&gt;
+
+  @if (members.isLoading()) { &lt;spinner /&gt; }
+  @for (member of members.value() ?? []; track member.id) {
+    &lt;member-card [member]="member" /&gt;
+  }
+  @if (members.error()) {
+    &lt;error-message [error]="members.error()" /&gt;
+  }
+`</span> })
+<span class="kw">export class</span> <span class="tp">TeamDashboardComponent</span> {
+  selectedTeam = <span class="fn">signal</span>(<span class="str">'engineering'</span>);
+
+  members = <span class="fn">httpResource</span>&lt;<span class="tp">Member[]</span>&gt;(() =&gt; ({
+    url: <span class="str">'/api/members'</span>,
+    params: { team: this.selectedTeam() }  <span class="cm">// auto-refetch on team change</span>
+  }));
+}</code></pre>
+  </section>
+
+
+  <!-- 11. PRODUCTION BEST PRACTICES -->
+  <section class="section" id="production">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Production Best Practices</h2>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Build & Bundle</h3>
+        <ul class="checklist">
+          <li>Use <code>@angular-devkit/build-angular:application</code> (esbuild builder)</li>
+          <li>Set build budgets in angular.json</li>
+          <li>Enable route-level code splitting via lazy routes</li>
+          <li>Use @defer for feature-level lazy loading</li>
+          <li>Enable compression (Brotli &gt; gzip)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Change Detection</h3>
+        <ul class="checklist">
+          <li>Use OnPush on ALL components (signals make this automatic)</li>
+          <li>Adopt Zoneless for new projects (stable v20.2)</li>
+          <li>Use <code>computed()</code> instead of getters in templates</li>
+          <li>Avoid calling functions in templates without memoization</li>
+          <li>Profile with Angular DevTools before optimizing</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>SSR / Hydration</h3>
+        <ul class="checklist">
+          <li>Enable incremental hydration for content-heavy pages</li>
+          <li>Use <code>isPlatformBrowser()</code> for browser-only APIs</li>
+          <li>Enable event replay for better UX during hydration</li>
+          <li>Use route-level render mode — SSG for static, SSR for dynamic</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Testing</h3>
+        <ul class="checklist">
+          <li>Migrate from Karma to Vitest (schematic available)</li>
+          <li>Use Component Harnesses for component tests</li>
+          <li>Use TestBed with standalone components — no module setup</li>
+          <li>Mock signals with simple signal() values in tests</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Monitoring in Production</h3>
+    <pre><code><span class="cm">// ErrorHandler for unhandled errors</span>
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="tp">GlobalErrorHandler</span> <span class="kw">implements</span> <span class="tp">ErrorHandler</span> {
+  <span class="fn">handleError</span>(error: <span class="kw">unknown</span>) {
+    <span class="cm">// Send to Sentry, Datadog, etc.</span>
+    Sentry.<span class="fn">captureException</span>(error);
+    console.<span class="fn">error</span>(error);
+  }
+}
+<span class="cm">// providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }]</span></code></pre>
+  </section>
+
+
+  <!-- 12. COMMON MISTAKES -->
+  <section class="section" id="mistakes">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Common Mistakes</h2>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-label danger-label">✗ Mistake 1 — Calling Functions in Templates</div>
+      <p style="margin:8px 0 4px;">Every change detection cycle calls functions in the template. This kills performance.</p>
+      <pre style="margin:8px 0 0;"><code><span class="cm">// BAD — getActiveUsers() called on every CD cycle</span>
+<span class="str">@for</span> (user <span class="kw">of</span> <span class="fn">getActiveUsers</span>(); track user.id) {}
+
+<span class="cm">// GOOD — computed() is memoized, only recalculates when inputs change</span>
+activeUsers = <span class="fn">computed</span>(() =&gt; this.users().<span class="fn">filter</span>(u =&gt; u.active));
+<span class="str">@for</span> (user <span class="kw">of</span> activeUsers(); track user.id) {}</code></pre>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-label danger-label">✗ Mistake 2 — Using Default Change Detection with Zone.js on Large Apps</div>
+      Not enabling OnPush strategy means every async event re-renders the entire component tree. With 200+ components, this causes serious janks.
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-label danger-label">✗ Mistake 3 — Adopting Experimental APIs in Production</div>
+      Signal Forms, httpResource, and Resource API are still experimental. Using them in production means you accept breaking API changes between minor versions.
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-label danger-label">✗ Mistake 4 — Memory Leaks from Manual Subscriptions</div>
+      <pre><code><span class="cm">// BAD — subscription never cleaned up → memory leak</span>
+<span class="kw">export class</span> <span class="tp">UserComponent</span> <span class="kw">implements</span> <span class="tp">OnInit</span> {
+  <span class="fn">ngOnInit</span>() { this.service.users$.<span class="fn">subscribe</span>(u =&gt; this.users = u); }
+}
+
+<span class="cm">// GOOD — takeUntilDestroyed auto-unsubscribes on component destroy</span>
+users$ = this.service.users$.<span class="fn">pipe</span>(<span class="fn">takeUntilDestroyed</span>());</code></pre>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-label danger-label">✗ Mistake 5 — Skipping Track in @for</div>
+      Without <code>track</code>, Angular re-renders the entire list on every change instead of diffing by identity. Always use <code>track item.id</code>.
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-label warn-label">⚠ Mistake 6 — Not Migrating from NgModules</div>
+      NgModules aren't removed, but all new Angular tooling, optimizations, and APIs are designed for standalone. Staying on NgModules means missing out on incremental hydration, signal inputs, and future compiler improvements.
+    </div>
+  </section>
+
+
+  <!-- 13. INTERVIEW QUESTIONS -->
+  <section class="section" id="interview">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Interview Questions</h2>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Beginner</div>
+      <div class="q-text">What is the Angular Roadmap and what are its current three goals?</div>
+      <div class="q-answer">The roadmap is the Angular team's public communication of their strategic plans. The three goals are: (1) Improve AI developer experience, (2) Improve developer velocity/DX, and (3) Improve framework performance. These guide all feature work and aren't tied to specific version numbers.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Beginner</div>
+      <div class="q-text">What is the difference between a "stable" feature and an "experimental" one in Angular?</div>
+      <div class="q-answer">Stable APIs follow semantic versioning — no breaking changes within a major version. Experimental APIs can have breaking changes in any release, including minors. Developer preview is between the two: mostly stable API but may have minor changes before going stable.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Intermediate</div>
+      <div class="q-text">Explain Zoneless change detection and why it was added to the roadmap.</div>
+      <div class="q-answer">Zone.js works by monkey-patching all browser async APIs to trigger change detection. This is implicit, hard to debug, adds ~33KB to bundles, and prevents interop with non-Angular code. Zoneless Angular (stable v20.2) removes zone.js entirely, using Signals to track dependencies explicitly. Components only re-render when their signal dependencies change, giving finer-grained control, better performance, and smaller bundles.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Intermediate</div>
+      <div class="q-text">How does incremental hydration differ from full hydration and what performance improvements does it bring?</div>
+      <div class="q-answer">Full hydration rehydrates the entire app on page load even if parts aren't interactive. Incremental hydration (powered by @defer blocks) only hydrates components when they're needed — on viewport entry, on interaction, on hover, etc. The Angular team measured 40-50% LCP improvements in real-world apps using incremental hydration vs CSR alone.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Intermediate</div>
+      <div class="q-text">What problem does the tsgo compiler integration solve?</div>
+      <div class="q-answer">Microsoft ported the TypeScript compiler to Go (tsgo), promising 5–10× compilation speedup. Angular has deep TypeScript compiler integration (template type-checking, language service, etc.), so supporting tsgo requires major architectural changes to the Angular compiler. The benefit is dramatically faster build and type-check times for large Angular projects.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Expert</div>
+      <div class="q-text">How would you architect a migration strategy from Zone.js to Zoneless for a large enterprise Angular app?</div>
+      <div class="q-answer">Phase 1: Enable OnPush on all components to identify components relying on Default CD. Phase 2: Replace all @Input/@Output with signal-based input()/output(). Phase 3: Migrate services from BehaviorSubject to signal(). Phase 4: Add provideExperimentalZonelessChangeDetection() alongside zone.js in parallel (Angular supports running both). Phase 5: Fix components that fail in Zoneless (usually those manually calling cdr.markForCheck() incorrectly). Phase 6: Remove zone.js from polyfills.ts. The key risk is third-party libraries that depend on zone.js — audit them first.</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-label">Expert</div>
+      <div class="q-text">Explain the signal graph model and how computed() achieves memoization without a framework scheduler.</div>
+      <div class="q-answer">Angular's signal implementation uses a reactive graph where each computed() node tracks which signals it read during its last execution (its "dependencies"). When a source signal changes, it marks dependent computed signals as "dirty" but doesn't recompute them. The computed value is only recalculated lazily when it's read next time — this is "glitch-free lazy evaluation." The Angular runtime's change detection integrates with this graph: a component is only scheduled for re-render if a signal it reads (directly in its template or via computed()) has been dirtied. No zone, no scheduler, no explicit subscriptions.</div>
+    </div>
+  </section>
+
+
+  <!-- 14. LEARNING NOTES + ROADMAP -->
+  <section class="section" id="notes">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <h2>Learning Notes by Level</h2>
+    </div>
+
+    <div class="level-section level-beginner">
+      <div class="level-header">🟢 Beginner Notes</div>
+      <div class="level-content">
+        <ul>
+          <li><strong>Standalone components are the default:</strong> You no longer need NgModules. Every new Angular project generates standalone components — don't look for AppModule, it's gone.</li>
+          <li><strong>Signals replace most RxJS usage:</strong> For local state and simple async, use signal(), computed(), and effect(). Only reach for RxJS when dealing with complex stream operations (debounce, merge, race).</li>
+          <li><strong>New control flow syntax (@if, @for, @switch):</strong> The *ngIf, *ngFor structural directives still work, but the new built-in control flow is cleaner, more performant, and is the Angular team's recommendation for all new code.</li>
+          <li><strong>The roadmap uses status labels — follow them:</strong> If something is "experimental," don't use it in your job's production app. Use "stable" APIs for production and "developer preview" with care.</li>
+          <li><strong>angular.dev is the official docs site:</strong> angular.io is legacy. All new Angular v17+ documentation is at angular.dev.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="level-section level-intermediate" style="margin-top:16px;">
+      <div class="level-header">🟡 Intermediate Notes</div>
+      <div class="level-content">
+        <ul>
+          <li><strong>OnPush is the performance baseline:</strong> Enable OnPush on every component as a default. With signals, Angular automatically marks only signal-dependent components for re-render. Without OnPush, you're leaving performance on the table.</li>
+          <li><strong>Route-level render modes replace universal/app-shell complexity:</strong> Instead of configuring separate SSR/CSR apps, declare renderMode per route in your router config. This is cleaner, more maintainable, and supported by the Angular CLI build pipeline.</li>
+          <li><strong>@defer is your bundle-splitting tool for templates:</strong> Anything below the fold, modals, drawers, analytics — wrap in @defer. It generates separate code chunks automatically without manual dynamic import() calls.</li>
+          <li><strong>Event replay solves the SSR "lost click" problem:</strong> Users on slow connections often click before hydration completes. withEventReplay() queues those events and replays them post-hydration. Enable it in all SSR apps.</li>
+          <li><strong>The Angular Aria CDK patterns are for building design systems:</strong> If your team uses a custom component library, Angular Aria gives you accessible keyboard interactions, ARIA roles, and focus management out of the box — you style it yourself.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="level-section level-expert" style="margin-top:16px;">
+      <div class="level-header">🔴 Expert Notes</div>
+      <div class="level-content">
+        <ul>
+          <li><strong>tsgo integration will require compiler re-architecture:</strong> The Angular Language Service and template type-checker are deeply integrated with the TypeScript compiler's internal APIs. tsgo uses a different Go-native API surface. Watch the angular/angular repo for the RFC — when it lands, your custom schematics, eslint-plugin-angular, and ng-packagr configs may need updates.</li>
+          <li><strong>Signal Forms' interop model is the key migration story:</strong> The planned interop between Signal Forms and Reactive Forms means you can migrate form by form. Understand FormGroup → Signal Form bridge APIs before the stable release so you can plan migration at scale.</li>
+          <li><strong>httpResource is replacing the Service + Observable pattern, but not fully yet:</strong> httpResource lacks operators (retry, debounce, switchMap) that RxJS handles elegantly. For complex data flows, combine: use httpResource for simple fetches, RxJS resource() factory for complex reactive chains, and NgRx Signal Store for shared server state.</li>
+          <li><strong>AI code generation quality for Angular is already high (per roadmap):</strong> The Angular team's Web Codegen Scorer benchmarks show modern LLMs generate correct Angular code. The remaining gaps are in library-specific patterns (NgRx, Angular Material customization tokens) and cutting-edge APIs (Signal Forms, httpResource). You can improve LLM output by including framework version in your prompts and linking to specific angular.dev guide URLs.</li>
+          <li><strong>Zoneless + Incremental Hydration is the performance ceiling for Angular apps:</strong> An app using Zoneless (no zone.js overhead), OnPush everywhere (fine-grained CD), Signals (lazy memoized graph), @defer (split bundles), incremental hydration (progressive activation), and prerendered static routes represents the current theoretical best case for Angular performance on the web.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 15. LEARNING ROADMAP -->
+  <section class="section" id="learning">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <h2>Angular Learning Roadmap</h2>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase">
+        <div class="phase-num">PHASE 1</div>
+        <h4>Foundations</h4>
+        <ul>
+          <li>TypeScript fundamentals</li>
+          <li>Standalone components</li>
+          <li>New control flow</li>
+          <li>Basic routing</li>
+          <li>HttpClient basics</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE 2</div>
+        <h4>Reactivity</h4>
+        <ul>
+          <li>signal() + computed()</li>
+          <li>effect() patterns</li>
+          <li>input() / output()</li>
+          <li>linkedSignal()</li>
+          <li>RxJS interop</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE 3</div>
+        <h4>Performance</h4>
+        <ul>
+          <li>OnPush strategy</li>
+          <li>@defer blocks</li>
+          <li>NgOptimizedImage</li>
+          <li>Lazy routes</li>
+          <li>Bundle analysis</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE 4</div>
+        <h4>SSR & Hydration</h4>
+        <ul>
+          <li>Angular Universal</li>
+          <li>Route render modes</li>
+          <li>Incremental hydration</li>
+          <li>Event replay</li>
+          <li>Prerendering</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE 5</div>
+        <h4>Advanced</h4>
+        <ul>
+          <li>Zoneless Angular</li>
+          <li>Signal Forms</li>
+          <li>NgRx Signal Store</li>
+          <li>Angular Aria / CDK</li>
+          <li>Custom schematics</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Recommended Learning Path by Weeks</h3>
+    <table>
+      <thead><tr><th>Week</th><th>Focus</th><th>Key Concepts</th><th>Goal</th></tr></thead>
+      <tbody>
+        <tr><td>1–2</td><td>TypeScript + Components</td><td>Generics, decorators, standalone, template syntax</td><td>Build a static UI</td></tr>
+        <tr><td>3–4</td><td>Data & Routing</td><td>HttpClient, Router, Guards, Resolvers</td><td>Multi-page app with API</td></tr>
+        <tr><td>5–6</td><td>Signals & Reactivity</td><td>signal, computed, effect, input/output signals</td><td>Refactor services to signals</td></tr>
+        <tr><td>7–8</td><td>Performance</td><td>OnPush, @defer, lazy routes, image directive</td><td>Pass Core Web Vitals</td></tr>
+        <tr><td>9–10</td><td>State Management</td><td>NgRx Signal Store or custom signal services</td><td>Shared state across features</td></tr>
+        <tr><td>11–12</td><td>SSR & Hydration</td><td>Route render modes, incremental hydration, Zoneless</td><td>Production SSR deployment</td></tr>
+        <tr><td>13+</td><td>Ecosystem Mastery</td><td>Angular CDK, Material Aria, testing, CI/CD</td><td>Full production-grade app</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-tip" style="margin-top:24px;">
+      <div class="callout-label tip-label">✓ Pro Tip</div>
+      Follow the roadmap's status labels as your adoption guide: when a feature moves from "experimental" to "developer preview," start building pet projects with it. When it hits "stable," adopt it in production. This keeps you 6–12 months ahead of the average Angular developer.
+    </div>
+  </section>
+
+  <div style="padding: 40px 0 24px; border-top: 1px solid var(--border); margin-top: 32px; text-align: center;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">
+      Based on angular.dev/roadmap · Angular v22 · Compiled for Angular Engineering
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
